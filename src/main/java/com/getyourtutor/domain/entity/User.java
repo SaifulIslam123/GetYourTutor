@@ -3,7 +3,7 @@ package com.getyourtutor.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @Setter
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -29,11 +29,7 @@ public class User {
     @Column(nullable = false)
     private UserType userType;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(nullable = false)
     private Boolean isActive = true;
@@ -68,12 +64,9 @@ public class User {
     @OneToMany(mappedBy = "approvedBy", fetch = FetchType.LAZY)
     private Set<Approval> approvals = new HashSet<>();
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+
 }
 
-enum UserType {
+public enum UserType {
     TUTOR, PARENT, ORGANIZATION, PROMOTER, ADMIN
 }

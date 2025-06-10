@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "payments")
 @Getter
 @Setter
-public class Payment {
+public class Payment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
@@ -30,8 +30,7 @@ public class Payment {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Column(nullable = false)
-    private LocalDateTime paymentDate = LocalDateTime.now();
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -49,7 +48,7 @@ public class Payment {
     private BigDecimal commissionAmount;
 }
 
-enum PaymentStatus {
+public enum PaymentStatus {
     PENDING, COMPLETED, FAILED, REFUNDED
 }
 

@@ -3,13 +3,13 @@ package com.getyourtutor.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "job_applications")
 @Getter
 @Setter
-public class JobApplication {
+public class JobApplication extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobApplicationId;
@@ -22,8 +22,7 @@ public class JobApplication {
     @JoinColumn(name = "tutor_user_id", nullable = false)
     private User tutor;
 
-    @Column(nullable = false)
-    private LocalDateTime applicationDate = LocalDateTime.now();
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,6 +38,6 @@ public class JobApplication {
     private Job job;
 }
 
-enum ApplicationStatus {
+public enum ApplicationStatus {
     PENDING, ACCEPTED, REJECTED
 }

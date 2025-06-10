@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "promotion_users")
 @Getter
 @Setter
-public class PromotionUser {
+public class PromotionUser extends BaseEntity {
     @EmbeddedId
     private PromotionUserId id;
 

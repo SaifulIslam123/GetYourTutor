@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "service_types")
 @Getter
 @Setter
-public class ServiceType {
+public class ServiceType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceTypeId;
@@ -32,6 +32,6 @@ public class ServiceType {
     private Set<PromotionServiceType> promotionServiceTypes = new HashSet<>();
 }
 
-enum ServiceTypeName {
+public enum ServiceTypeName {
     PRIVATE_1_1, HOME_SCHOOL, ONLINE, RELIGIOUS, SPECIAL_NEED, NANNY
 }

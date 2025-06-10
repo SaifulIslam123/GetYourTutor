@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "approvals")
 @Getter
 @Setter
-public class Approval {
+public class Approval extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long approvalId;
@@ -42,10 +42,10 @@ public class Approval {
     private Job job;
 }
 
-enum ApprovalEntityType {
+public enum ApprovalEntityType {
     USER, JOB, SERVICE
 }
 
-enum ApprovalStatus {
+public enum ApprovalStatus {
     PENDING, APPROVED, REJECTED
 }

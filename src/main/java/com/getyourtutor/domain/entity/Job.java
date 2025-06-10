@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "jobs")
 @Getter
 @Setter
-public class Job {
+public class Job extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobId;
@@ -59,6 +59,6 @@ public class Job {
     private Approval approval;
 }
 
-enum JobStatus {
+public enum JobStatus {
     ACTIVE, COMPLETED, CANCELLED
 }

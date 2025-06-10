@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "job_postings")
 @Getter
 @Setter
-public class JobPosting {
+public class JobPosting extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long jobPostingId;
@@ -44,11 +44,7 @@ public class JobPosting {
     @Column(nullable = false)
     private JobPostingStatus status = JobPostingStatus.OPEN;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "jobPosting", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<JobApplication> jobApplications = new HashSet<>();
@@ -56,12 +52,9 @@ public class JobPosting {
     @OneToOne(mappedBy = "jobPosting", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Job job;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
+
 }
 
-enum JobPostingStatus {
+public enum JobPostingStatus {
     OPEN, CLOSED, FILLED
 }

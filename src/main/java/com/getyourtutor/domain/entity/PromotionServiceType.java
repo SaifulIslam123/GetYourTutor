@@ -8,7 +8,7 @@ import lombok.Setter;
 @Table(name = "promotion_service_types")
 @Getter
 @Setter
-public class PromotionServiceType {
+public class PromotionServiceType extends BaseEntity {
     @EmbeddedId
     private PromotionServiceTypeId id;
 
