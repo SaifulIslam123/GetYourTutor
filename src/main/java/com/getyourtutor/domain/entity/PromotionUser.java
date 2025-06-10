@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "promotion_users")
@@ -33,12 +34,12 @@ public class PromotionUser extends BaseEntity {
 @Embeddable
 class PromotionUserId implements java.io.Serializable {
     private Long promotionId;
-    private Long userId;
+    private UUID userId;
     
     // Constructors, equals, and hashCode methods
     public PromotionUserId() {}
     
-    public PromotionUserId(Long promotionId, Long userId) {
+    public PromotionUserId(Long promotionId, UUID userId) {
         this.promotionId = promotionId;
         this.userId = userId;
     }

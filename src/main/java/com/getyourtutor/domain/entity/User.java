@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -13,8 +14,8 @@ import java.util.Set;
 @Setter
 public class User extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID userId;
 
     @Column(nullable = false, unique = true)
     private String username;
