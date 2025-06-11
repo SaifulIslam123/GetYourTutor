@@ -48,10 +48,6 @@ public class Payment extends BaseEntity {
     private BigDecimal commissionAmount;
 }
 
-public enum PaymentStatus {
-    PENDING, COMPLETED, FAILED, REFUNDED
-}
-
 enum PaymentMethod {
     CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, PAYPAL, CASH, OTHER
 }

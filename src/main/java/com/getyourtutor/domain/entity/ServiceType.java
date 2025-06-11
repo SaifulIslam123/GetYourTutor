@@ -32,6 +32,3 @@ public class ServiceType extends BaseEntity {
     private Set<PromotionServiceType> promotionServiceTypes = new HashSet<>();
 }
 
-public enum ServiceTypeName {
-    PRIVATE_1_1, HOME_SCHOOL, ONLINE, RELIGIOUS, SPECIAL_NEED, NANNY
-}

@@ -59,6 +59,3 @@ public class Job extends BaseEntity {
     private Approval approval;
 }
 
-public enum JobStatus {
-    ACTIVE, COMPLETED, CANCELLED
-}

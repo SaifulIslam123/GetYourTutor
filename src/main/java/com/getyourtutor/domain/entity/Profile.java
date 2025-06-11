@@ -25,8 +25,8 @@ public class Profile extends BaseEntity {
     private String phone;
 
 
-    @Column(columnDefinition = "TEXT")
-    private String address;
+    @Embedded
+    private Address address;
 
     @Column
     private LocalDate dateOfBirth;
@@ -45,6 +45,9 @@ public class Profile extends BaseEntity {
     private String photoUrl;
 
 
+
+    @Column
+    private String taxId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

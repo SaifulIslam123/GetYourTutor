@@ -38,6 +38,3 @@ public class JobApplication extends BaseEntity {
     private Job job;
 }
 
-public enum ApplicationStatus {
-    PENDING, ACCEPTED, REJECTED
-}

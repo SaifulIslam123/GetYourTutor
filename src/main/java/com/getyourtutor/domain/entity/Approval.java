@@ -42,10 +42,3 @@ public class Approval extends BaseEntity {
     private Job job;
 }
 
-public enum ApprovalEntityType {
-    USER, JOB, SERVICE
-}
-
-public enum ApprovalStatus {
-    PENDING, APPROVED, REJECTED
-}

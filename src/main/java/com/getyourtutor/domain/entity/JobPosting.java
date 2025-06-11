@@ -55,6 +55,3 @@ public class JobPosting extends BaseEntity {
 
 }
 
-public enum JobPostingStatus {
-    OPEN, CLOSED, FILLED
-}

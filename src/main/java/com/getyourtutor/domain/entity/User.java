@@ -68,6 +68,3 @@ public class User extends BaseEntity {
 
 }
 
-public enum UserType {
-    TUTOR, PARENT, ORGANIZATION, PROMOTER, ADMIN
-}
