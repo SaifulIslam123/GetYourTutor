@@ -47,7 +47,3 @@ public class Payment extends BaseEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal commissionAmount;
 }
-
-enum PaymentMethod {
-    CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER, PAYPAL, CASH, OTHER
-}
