@@ -1,76 +1,130 @@
 package com.getyourtutor.service.impl;
 
-import com.getyourtutor.domain.entity.ApplicationStatus;
+import com.getyourtutor.domain.ApplicationStatus;
+import com.getyourtutor.domain.entity.Job;
 import com.getyourtutor.domain.entity.JobApplication;
-import com.getyourtutor.domain.entity.JobPosting;
 import com.getyourtutor.domain.entity.User;
+import com.getyourtutor.dto.request.JobApplicationRequest;
+import com.getyourtutor.dto.response.JobApplicationResponse;
+import com.getyourtutor.exception.BadRequestException;
+import com.getyourtutor.exception.ResourceNotFoundException;
 import com.getyourtutor.repository.JobApplicationRepository;
-import com.getyourtutor.repository.JobPostingRepository;
+import com.getyourtutor.repository.JobRepository;
 import com.getyourtutor.repository.UserRepository;
 import com.getyourtutor.service.JobApplicationService;
 import com.getyourtutor.service.JobService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class JobApplicationServiceImpl implements JobApplicationService {
 
-    @Autowired
-    private JobApplicationRepository jobApplicationRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JobPostingRepository jobPostingRepository;
-
-    @Autowired
-    private JobService jobService;
+    private final JobApplicationRepository jobApplicationRepository;
+    private final UserRepository userRepository;
+    private final JobRepository jobRepository;
+    private final JobService jobService;
 
     @Override
-    public JobApplication applyToJob(Long jobPostingId, String username, JobApplication application) throws Exception {
+    @Transactional
+    public JobApplicationResponse applyToJob(Long jobId, String username, JobApplicationRequest applicationRequest) {
         User tutor = userRepository.findByUsername(username)
-                .orElseThrow(() -> new Exception("User not found with username: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
 
-        JobPosting jobPosting = jobPostingRepository.findById(jobPostingId)
-                .orElseThrow(() -> new Exception("JobPosting not found with id: " + jobPostingId));
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
 
-        if (jobApplicationRepository.existsByJobPostingAndTutor(jobPosting, tutor)) {
-            throw new Exception("You have already applied to this job posting.");
+        if (jobApplicationRepository.existsByJobAndTutor(job, tutor)) {
+            throw new BadRequestException("You have already applied for this job.");
         }
 
+        JobApplication application = new JobApplication();
+        application.setJob(job);
         application.setTutor(tutor);
-        application.setJobPosting(jobPosting);
+        application.setProposedRate(applicationRequest.getProposedRate());
+        application.setCoverLetter(applicationRequest.getCoverLetter());
         application.setStatus(ApplicationStatus.PENDING);
 
-        return jobApplicationRepository.save(application);
+        JobApplication savedApplication = jobApplicationRepository.save(application);
+        return mapToJobApplicationResponse(savedApplication);
     }
 
     @Override
-    public JobApplication approveApplication(Long applicationId) throws Exception {
-        JobApplication application = jobApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new Exception("JobApplication not found with id: " + applicationId));
+    @Transactional(readOnly = true)
+    public List<JobApplicationResponse> getApplicationsForJob(Long jobId, String username) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
 
-        if (application.getStatus() != ApplicationStatus.PENDING) {
-            throw new Exception("Only pending applications can be approved. Current status: " + application.getStatus());
+        if (!job.getConsumer().getUsername().equals(username)) {
+            throw new AccessDeniedException("You are not authorized to view applications for this job.");
         }
 
-        application.setStatus(ApplicationStatus.ACCEPTED);
-        jobService.createJobFromApplication(application);
-
-        return jobApplicationRepository.save(application);
+        return jobApplicationRepository.findByJob_JobId(jobId).stream()
+                .map(this::mapToJobApplicationResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public JobApplication rejectApplication(Long applicationId) throws Exception {
+    @Transactional
+    public JobApplicationResponse approveApplication(Long applicationId, String username) {
         JobApplication application = jobApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new Exception("JobApplication not found with id: " + applicationId));
+                .orElseThrow(() -> new ResourceNotFoundException("Job application not found with id: " + applicationId));
 
-        if (application.getStatus() != ApplicationStatus.PENDING) {
-            throw new Exception("Only pending applications can be rejected. Current status: " + application.getStatus());
+        Job job = application.getJob();
+
+        if (!job.getConsumer().getUsername().equals(username)) {
+            throw new AccessDeniedException("You are not authorized to approve this application.");
+        }
+
+        // Update Job to be an active job
+        job.setTutor(application.getTutor());
+        job.setHourlyRate(application.getProposedRate());
+        job.setStatus(com.getyourtutor.domain.JobStatus.ACTIVE);
+        jobRepository.save(job);
+
+        // Set application status to accepted
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        JobApplication savedApplication = jobApplicationRepository.save(application);
+
+        // Reject all other pending applications for this job
+        List<JobApplication> otherApplications = jobApplicationRepository
+                .findByJobAndStatusAndJobApplicationIdNot(job, ApplicationStatus.PENDING, applicationId);
+
+        otherApplications.forEach(otherApp -> otherApp.setStatus(ApplicationStatus.REJECTED));
+        jobApplicationRepository.saveAll(otherApplications);
+
+        return mapToJobApplicationResponse(savedApplication);
+    }
+
+    @Override
+    @Transactional
+    public JobApplicationResponse rejectApplication(Long applicationId, String username) {
+        JobApplication application = jobApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job application not found with id: " + applicationId));
+
+        if (!application.getJob().getConsumer().getUsername().equals(username)) {
+            throw new AccessDeniedException("You are not authorized to reject this application.");
         }
 
         application.setStatus(ApplicationStatus.REJECTED);
-        return jobApplicationRepository.save(application);
+        JobApplication savedApplication = jobApplicationRepository.save(application);
+        return mapToJobApplicationResponse(savedApplication);
+    }
+
+    private JobApplicationResponse mapToJobApplicationResponse(JobApplication application) {
+        return JobApplicationResponse.builder()
+                .jobApplicationId(application.getJobApplicationId())
+                .jobId(application.getJob().getJobId())
+                .tutorUsername(application.getTutor().getUsername())
+                .proposedRate(application.getProposedRate())
+                .coverLetter(application.getCoverLetter())
+                .status(application.getStatus())
+                .appliedAt(application.getCreatedAt())
+                .build();
     }
 }

@@ -1,9 +1,12 @@
 package com.getyourtutor.service;
 
-import com.getyourtutor.domain.entity.Approval;
+import com.getyourtutor.dto.request.ApprovalActionRequest;
+import com.getyourtutor.dto.response.ApprovalResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ApprovalService {
-    Approval createApproval(Approval approval);
-    Approval approve(Long approvalId, String approverUsername, String comments) throws Exception;
-    Approval reject(Long approvalId, String rejecterUsername, String comments) throws Exception;
+    Page<ApprovalResponse> getPendingApprovals(Pageable pageable);
+    ApprovalResponse approve(Long approvalId, ApprovalActionRequest request, String approverUsername);
+    ApprovalResponse reject(Long approvalId, ApprovalActionRequest request, String rejecterUsername);
 }

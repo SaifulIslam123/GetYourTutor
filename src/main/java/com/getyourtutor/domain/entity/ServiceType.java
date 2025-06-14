@@ -15,9 +15,8 @@ public class ServiceType extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long serviceTypeId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
-    private ServiceTypeName name;
+    @Column(length = 50, unique = true, nullable = false)
+    private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;

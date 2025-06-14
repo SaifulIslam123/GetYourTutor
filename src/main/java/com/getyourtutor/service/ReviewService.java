@@ -1,7 +1,11 @@
 package com.getyourtutor.service;
 
-import com.getyourtutor.domain.entity.Review;
+import com.getyourtutor.dto.request.ReviewRequest;
+import com.getyourtutor.dto.response.ReviewResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
-    Review createReview(Long jobId, String reviewerUsername, int rating, String comment) throws Exception;
+    ReviewResponse createReview(ReviewRequest reviewRequest, String reviewerUsername);
+    Page<ReviewResponse> getReviewsForUser(String username, Pageable pageable);
 }

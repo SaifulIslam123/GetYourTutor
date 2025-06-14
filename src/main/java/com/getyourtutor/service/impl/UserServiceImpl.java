@@ -1,8 +1,8 @@
 package com.getyourtutor.service.impl;
 
+import com.getyourtutor.domain.entity.Role;
 import com.getyourtutor.domain.entity.User;
-import com.getyourtutor.dto.UserProfileDto;
-import com.getyourtutor.repository.ReviewRepository;
+import com.getyourtutor.dto.request.UserRegistrationRequest;
 import com.getyourtutor.repository.RoleRepository;
 import com.getyourtutor.repository.UserRepository;
 import com.getyourtutor.service.UserService;
@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,52 +26,41 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ReviewRepository reviewRepository;
-
     @Override
-    public User registerNewUser(User user) throws Exception {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new Exception("Username " + user.getUsername() + " already exists");
+    public User registerUser(UserRegistrationRequest registrationRequest) throws Exception {
+        if (userRepository.existsByUsername(registrationRequest.getUsername())) {
+            throw new Exception("Username " + registrationRequest.getUsername() + " already exists");
         }
 
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new Exception("Email " + user.getEmail() + " already exists");
+        if (userRepository.existsByEmail(registrationRequest.getEmail())) {
+            throw new Exception("Email " + registrationRequest.getEmail() + " already exists");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setUsername(registrationRequest.getUsername());
+        user.setEmail(registrationRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
 
-        roleRepository.findByName("ROLE_USER").ifPresent(role -> {
-            user.setRoles(Collections.singleton(role));
-        });
+        Set<String> strRoles = registrationRequest.getRoles();
+        Set<Role> roles = new HashSet<>();
 
+        if (strRoles == null || strRoles.isEmpty()) {
+            Role userRole = roleRepository.findByName("ROLE_USER")
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(roleName -> {
+                Role role = roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found. " + roleName));
+                roles.add(role);
+            });
+        }
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public UserProfileDto getUserProfile(String username) throws Exception {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new Exception("User not found with username: " + username));
-
-        Double averageRating = reviewRepository.calculateAverageRating(user);
-        Long totalReviews = reviewRepository.countVisibleReviews(user);
-
-        // Handle case where there are no reviews, so averageRating is null
-        if (averageRating == null) {
-            averageRating = 0.0;
-        }
-
-        return new UserProfileDto(
-                user.getUsername(),
-                user.getProfile().getFirstName(),
-                user.getProfile().getLastName(),
-                averageRating,
-                totalReviews
-        );
     }
 }

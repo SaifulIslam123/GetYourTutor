@@ -1,12 +1,9 @@
 package com.getyourtutor.service;
 
-import com.getyourtutor.domain.entity.Profile;
-
-import java.util.Optional;
-import java.util.UUID;
+import com.getyourtutor.dto.request.ProfileRequest;
+import com.getyourtutor.dto.response.ProfileResponse;
 
 public interface ProfileService {
-    Profile createProfile(UUID userId, String bio, String qualifications, String experience, String photoUrl);
-    Optional<Profile> getProfileByUserId(UUID userId);
-    boolean profileExistsForUser(UUID userId);
+    ProfileResponse getProfileByUsername(String username);
+    ProfileResponse updateProfile(String username, ProfileRequest profileRequest);
 }

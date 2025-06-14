@@ -1,7 +1,14 @@
 package com.getyourtutor.service;
 
-import com.getyourtutor.domain.entity.Promotion;
+import com.getyourtutor.dto.request.PromotionRequest;
+import com.getyourtutor.dto.response.PromotionResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PromotionService {
-    Promotion createPromotion(Promotion promotion, String creatorUsername) throws Exception;
+    PromotionResponse createPromotion(PromotionRequest request, String creatorUsername);
+    PromotionResponse updatePromotion(Long promotionId, PromotionRequest request);
+    void deletePromotion(Long promotionId);
+    PromotionResponse getPromotionById(Long promotionId);
+    Page<PromotionResponse> getAllPromotions(Pageable pageable);
 }
