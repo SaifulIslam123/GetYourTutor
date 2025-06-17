@@ -4,6 +4,8 @@ import com.getyourtutor.domain.entity.Job;
 import com.getyourtutor.domain.entity.Payment;
 import com.getyourtutor.domain.entity.PaymentMethod;
 import com.getyourtutor.domain.entity.PaymentStatus;
+import com.getyourtutor.dto.request.PaymentRequest;
+import com.getyourtutor.dto.response.PaymentResponse;
 import com.getyourtutor.repository.JobRepository;
 import com.getyourtutor.repository.PaymentRepository;
 import com.getyourtutor.service.PaymentService;
@@ -69,5 +71,22 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(PaymentStatus.FAILED);
 
         return paymentRepository.save(payment);
+    }
+
+    @Override
+    public PaymentResponse initiatePayment(PaymentRequest request, String consumerUsername) {
+        // TODO implement
+        return PaymentResponse.builder()
+                .paymentId(0L)
+                .jobId(request.getJobId())
+                .amount(new java.math.BigDecimal("0"))
+                .status(PaymentStatus.PENDING)
+                .build();
+    }
+
+    @Override
+    public PaymentResponse getPaymentDetails(Long paymentId, String username) {
+        // TODO implement
+        return PaymentResponse.builder().paymentId(paymentId).build();
     }
 }

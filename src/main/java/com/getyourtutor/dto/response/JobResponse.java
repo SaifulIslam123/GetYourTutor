@@ -1,6 +1,6 @@
 package com.getyourtutor.dto.response;
 
-import com.getyourtutor.domain.JobStatus;
+import com.getyourtutor.domain.entity.JobStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

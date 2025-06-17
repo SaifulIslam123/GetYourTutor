@@ -2,6 +2,8 @@ package com.getyourtutor.service.impl;
 
 import com.getyourtutor.domain.entity.Profile;
 import com.getyourtutor.domain.entity.User;
+import com.getyourtutor.dto.request.ProfileRequest;
+import com.getyourtutor.dto.response.ProfileResponse;
 import com.getyourtutor.repository.ProfileRepository;
 import com.getyourtutor.repository.UserRepository;
 import com.getyourtutor.service.ProfileService;
@@ -49,5 +51,29 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional(readOnly = true)
     public boolean profileExistsForUser(UUID userId) {
         return profileRepository.existsByUserId(userId);
+    }
+
+    @Override
+    public ProfileResponse getProfileByUsername(String username) {
+        // TODO: implement properly
+        return ProfileResponse.builder()
+                .username(username)
+                .firstName("First")
+                .lastName("Last")
+                .bio("")
+                .headline("")
+                .build();
+    }
+
+    @Override
+    public ProfileResponse updateProfile(String username, ProfileRequest request) {
+        // TODO: implement properly
+        return ProfileResponse.builder()
+                .username(username)
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .bio(request.getBio())
+                .headline(request.getHeadline())
+                .build();
     }
 }

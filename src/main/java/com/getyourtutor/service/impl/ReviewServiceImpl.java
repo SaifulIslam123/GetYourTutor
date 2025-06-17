@@ -3,12 +3,17 @@ package com.getyourtutor.service.impl;
 import com.getyourtutor.domain.entity.Job;
 import com.getyourtutor.domain.entity.Review;
 import com.getyourtutor.domain.entity.User;
+import com.getyourtutor.dto.request.ReviewRequest;
+import com.getyourtutor.dto.response.ReviewResponse;
 import com.getyourtutor.repository.JobRepository;
 import com.getyourtutor.repository.ReviewRepository;
 import com.getyourtutor.repository.UserRepository;
 import com.getyourtutor.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -51,5 +56,28 @@ public class ReviewServiceImpl implements ReviewService {
         review.setComment(comment);
 
         return reviewRepository.save(review);
+    }
+
+    // --- DTO based methods for controllers ---
+    @Override
+    public ReviewResponse createReview(ReviewRequest request, String reviewerUsername) {
+        // TODO implement real mapping; using placeholder
+        return ReviewResponse.builder()
+                .reviewId(0L)
+                .rating(request.getRating())
+                .comment(request.getComment())
+                .build();
+    }
+
+    @Override
+    public List<ReviewResponse> getReviewsForJob(Long jobId) {
+        // TODO implement
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<ReviewResponse> getReviewsForTutor(Long tutorId) {
+        // TODO implement
+        return Collections.emptyList();
     }
 }

@@ -2,6 +2,7 @@ package com.getyourtutor.service.impl;
 
 import com.getyourtutor.domain.entity.User;
 import com.getyourtutor.dto.UserProfileDto;
+import com.getyourtutor.dto.request.UserRegistrationRequest;
 import com.getyourtutor.repository.ReviewRepository;
 import com.getyourtutor.repository.RoleRepository;
 import com.getyourtutor.repository.UserRepository;
@@ -73,5 +74,14 @@ public class UserServiceImpl implements UserService {
                 averageRating,
                 totalReviews
         );
+    }
+
+    @Override
+    public void registerUser(UserRegistrationRequest request) throws Exception {
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        registerNewUser(user);
     }
 }

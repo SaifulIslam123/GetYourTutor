@@ -4,6 +4,8 @@ import com.getyourtutor.domain.entity.ApplicationStatus;
 import com.getyourtutor.domain.entity.JobApplication;
 import com.getyourtutor.domain.entity.JobPosting;
 import com.getyourtutor.domain.entity.User;
+import com.getyourtutor.dto.request.ApplicationStatusUpdateRequest;
+import com.getyourtutor.dto.response.JobApplicationResponse;
 import com.getyourtutor.repository.JobApplicationRepository;
 import com.getyourtutor.repository.JobPostingRepository;
 import com.getyourtutor.repository.UserRepository;
@@ -11,6 +13,9 @@ import com.getyourtutor.service.JobApplicationService;
 import com.getyourtutor.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class JobApplicationServiceImpl implements JobApplicationService {
@@ -72,5 +77,31 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
         application.setStatus(ApplicationStatus.REJECTED);
         return jobApplicationRepository.save(application);
+    }
+
+    // --- DTO methods for controllers stubs ---
+    @Override
+    public JobApplicationResponse applyForJob(Long jobId, String tutorUsername) {
+        // TODO implement
+        return JobApplicationResponse.builder()
+                .applicationId(0L)
+                .status(ApplicationStatus.PENDING)
+                .coverLetter("")
+                .build();
+    }
+
+    @Override
+    public List<JobApplicationResponse> getApplicationsForJob(Long jobId, String consumerUsername) {
+        // TODO implement
+        return Collections.emptyList();
+    }
+
+    @Override
+    public JobApplicationResponse updateApplicationStatus(Long jobId, Long applicationId, ApplicationStatusUpdateRequest request, String consumerUsername) {
+        // TODO implement
+        return JobApplicationResponse.builder()
+                .applicationId(applicationId)
+                .status(ApplicationStatus.valueOf(request.getStatus()))
+                .build();
     }
 }

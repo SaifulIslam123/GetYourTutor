@@ -1,6 +1,6 @@
 package com.getyourtutor.dto.response;
 
-import com.getyourtutor.domain.PaymentStatus;
+import com.getyourtutor.domain.entity.PaymentStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

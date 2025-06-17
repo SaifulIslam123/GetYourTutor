@@ -39,16 +39,16 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUsernameFromJWT(String token) {
+   /* public String getUsernameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
-    }
+    }*/
 
-    public boolean validateToken(String authToken) {
+  /*  public boolean validateToken(String authToken) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(authToken);
             return true;
@@ -64,5 +64,5 @@ public class JwtTokenProvider {
             logger.error("JWT claims string is empty.");
         }
         return false;
-    }
+    }*/
 }
